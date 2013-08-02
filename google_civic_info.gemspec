@@ -7,9 +7,9 @@ Gem::Specification.new do |spec|
   spec.name          = "google_civic_info"
   spec.version       = GoogleCivicInfo::VERSION
   spec.authors       = ["Benjamin Stein"]
-  spec.email         = ["ben@mcommons.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.email         = ["ben@mobilecommons.com"]
+  spec.description   = %q{Ruby client for Google Civic Info API}
+  spec.summary       = %q{Ruby client for Google Civic Info API}
   spec.homepage      = ""
   spec.license       = "MIT"
 
