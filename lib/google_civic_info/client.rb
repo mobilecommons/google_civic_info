@@ -25,7 +25,7 @@ module GoogleCivicInfo
   
   private
 
-    def http_request(address)
+    def http_request(address, options={})
       request  = Net::HTTP::Post.new("#{REPRESENTATIVES_URL}/lookup?key=#{@api_key}", {"Accept-Encoding" => "gzip", "User-Agent"=>'GoogleCivicInfo.rb (gzip)'})
        request['Content-Type'] = "application/json"
        request.body = {'address'=>address}.to_json
