@@ -18,9 +18,36 @@ Or install it yourself as:
 
 ## Usage
 
-    your_google_api_key = 'swordfish'
-    client = GoogleCivicInfo::Client.new(:api_key => your_google_api_key)
-    result = client.lookup("2145 Whisper Way Reston, VA")
+    >> your_google_api_key = 'swordfish'
+    >> client = GoogleCivicInfo::Client.new(:api_key => your_google_api_key)
+    >> result = client.lookup("2145 Whisper Way Reston, VA")
+
+    >> result.divisions.size
+    => 5
+    
+    >> result.divisions.first.ocd_division_id
+    => "ocd-division/country:us/state:va/cd:11"
+    
+    >> result.divisions.first.name
+    => "Virginia's 11th congressional district"
+    
+    >> result.divisions.first.offices.first.name
+    => "Representative"
+    
+    >> result.divisions.first.offices.first.level
+    => "federal"
+    
+    >> result.divisions.first.offices.first.officials.first.name
+    => "Gerald E. Connolly"
+    
+    >> result.divisions.first.offices.first.officials.first.urls
+    => ["http://connolly.house.gov/"]
+    
+    >> result.divisions.first.offices.first.officials.first.channels.first.url
+    => "http://www.youtube.com/repconnolly"
+    
+    
+
 
 ## Contributing
 
