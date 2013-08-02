@@ -18,9 +18,9 @@ Or install it yourself as:
 
 ## Usage
 
-your_google_api_key = 'swordfish
-client = GoogleCivicInfo::Client.new(:api_key => your_google_api_key)
-result = client.lookup("2145 Whisper Way Reston, VA")
+    your_google_api_key = 'swordfish
+    client = GoogleCivicInfo::Client.new(:api_key => your_google_api_key)
+    result = client.lookup("2145 Whisper Way Reston, VA")
 
 ## Contributing
 
