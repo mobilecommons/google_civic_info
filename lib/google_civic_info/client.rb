@@ -1,4 +1,5 @@
-require 'httparty'
+require 'net/https'
+require 'zlib'
 require 'json'
 module GoogleCivicInfo
   class Client
