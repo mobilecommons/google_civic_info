@@ -14,7 +14,7 @@ describe GoogleCivicInfo::Client do
     before do
       @client = GoogleCivicInfo::Client.new(:api_key=>'fakeout')
     end
-  
+
     it "should raise with a bad API key" do
       @client.stub(:http_request).and_return(bad_api_key_response)
       expect{ @client.lookup("2145 Whisper Way Reston, VA") }.to raise_error(GoogleCivicInfo::InvalidApiKey)
@@ -24,14 +24,14 @@ describe GoogleCivicInfo::Client do
       @client.stub(:http_request).and_return(no_address_parameter_response)
       expect{ @client.lookup("") }.to raise_error(GoogleCivicInfo::NoAddressParameter)
     end
-    
+
     it "should raise if Google server error" do
       @client.stub(:http_request).and_return(backend_error_response)
       expect{ @client.lookup("2145 Whisper Way Reston, VA") }.to raise_error(GoogleCivicInfo::BackendError)
     end
-    
+
   end
-  
+
   describe "processing Google responses" do
     it "should create a proper RepresentativeInfoResponse from Google JSON blob" do
       r = GoogleCivicInfo::RepresentativeInfoResponse.from_google_response(JSON.parse(successful_json_response_1))
@@ -47,20 +47,23 @@ describe GoogleCivicInfo::Client do
       official.channels.map{|c|c.url}.should == ["https://www.facebook.com/profile.php?id=61634046094", "https://twitter.com/GovernorVA"]
     end
   end
-  
+
   describe "representative lookup, making actual HTTP requests" do
     before do
-      pending "These specs make actual HTTP requests. To call them, comment this line out and set environment variable GOOGLE_API_KEY="
+      unless ENV['GOOGLE_API_KEY']
+        pending "These specs make actual HTTP requests. To call them set environment variable GOOGLE_API_KEY="
+      end
+
       @your_api_key = ENV['GOOGLE_API_KEY'] || "your-api-key"
       @client = GoogleCivicInfo::Client.new(:api_key=>@your_api_key)
     end
-    
+
     it "should return a correct result" do
       result = @client.lookup("2145 Whisper Way Reston, VA")
       result.should be_a(GoogleCivicInfo::RepresentativeInfoResponse)
       result.divisions.size.should == 7
     end
-    
+
     ADDRESSES = [
     #   "3300 Rivermont Ave, Lynchburg, VA 24503",
     #   "211 E 3rd St, Farmville, VA 23901",
@@ -79,17 +82,17 @@ describe GoogleCivicInfo::Client do
         puts result.inspect
       end
     end
-    
+
     it "should raise AddressUnparseableException" do
-      expect{@client.lookup('rocklobster')}.to raise_error(GoogleCivicInfo::AddressUnparseableException) 
+      expect{@client.lookup('rocklobster')}.to raise_error(GoogleCivicInfo::AddressUnparseableException)
     end
 
     it "should raise AddressUnparseableException" do
-      expect{@client.lookup('')}.to raise_error(GoogleCivicInfo::NoAddressParameter) 
+      expect{@client.lookup('')}.to raise_error(GoogleCivicInfo::NoAddressParameter)
     end
-    
+
   end
-  
+
 end
 
 def bad_api_key_response
