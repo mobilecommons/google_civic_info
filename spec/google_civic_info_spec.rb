@@ -61,7 +61,7 @@ describe GoogleCivicInfo::Client do
     it "should return a correct result" do
       result = @client.lookup("2145 Whisper Way Reston, VA")
       result.should be_a(GoogleCivicInfo::RepresentativeInfoResponse)
-      result.divisions.size.should == 7
+      result.divisions.size.should == 5
     end
 
     ADDRESSES = [
