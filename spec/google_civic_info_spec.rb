@@ -50,7 +50,10 @@ describe GoogleCivicInfo::Client do
   
   describe "representative lookup, making actual HTTP requests" do
     before do
-      pending "These specs make actual HTTP requests. To call them, comment this line out and set environment variable GOOGLE_API_KEY="
+      unless ENV['GOOGLE_API_KEY']
+        pending "These specs make actual HTTP requests. To call them, comment this line out and set environment variable GOOGLE_API_KEY="
+      end
+      
       @your_api_key = ENV['GOOGLE_API_KEY'] || "your-api-key"
       @client = GoogleCivicInfo::Client.new(:api_key=>@your_api_key)
     end
