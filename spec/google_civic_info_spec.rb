@@ -46,6 +46,7 @@ describe GoogleCivicInfo::Client do
       official.urls.should == ["http://www.governor.virginia.gov/"]
       official.channels.map{|c|c.url}.should == ["https://www.facebook.com/profile.php?id=61634046094", "https://twitter.com/GovernorVA"]
     end
+    
   end
 
   describe "representative lookup, making actual HTTP requests" do
@@ -61,7 +62,7 @@ describe GoogleCivicInfo::Client do
     it "should return a correct result" do
       result = @client.lookup("2145 Whisper Way Reston, VA")
       result.should be_a(GoogleCivicInfo::RepresentativeInfoResponse)
-      result.divisions.size.should == 5
+      result.divisions.size.should == 7
     end
 
     ADDRESSES = [

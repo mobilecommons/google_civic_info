@@ -3,13 +3,15 @@ module GoogleCivicInfo
     attr_accessor :name, :phones, :emails, :channels, :photoUrl, :urls, :party, :addresses
 
     DEMOCRAT   = 'Democrat'
-    DEMOCRATIC = 'Democratic'
     REPUBLICAN = 'Republican'
     UNKNOWN    = 'Unknown'
     PARTIES = [
-      DEMOCRAT, DEMOCRATIC, REPUBLICAN, UNKNOWN
+      DEMOCRAT, REPUBLICAN, UNKNOWN
     ]
 
+    DEMOCRAT_STRINGS   = %w[Democrat Democratic D]
+    REPUBLICAN_STRINGS = %w[Republican R]
+    
     def initialize(options={})
       validate_inputs(options)
     
@@ -20,10 +22,11 @@ module GoogleCivicInfo
       self.photoUrl  = options[:photoUrl]
       self.urls      = Array(options[:urls])
       self.addresses = Array(options[:addresses])
+      self.party     = normalize_party(options[:party])
     end
 
-    private
-  
+  private
+
     def validate_inputs(options)
       Array(options[:addresses]).each do |address|
         raise ArgumentError.new("Address expected. Got #{address.class}: #{address.inspect}") unless address.is_a?(Address)
@@ -38,9 +41,17 @@ module GoogleCivicInfo
         raise ArgumentError.new("Invalid URL format #{url.inspect}") unless url =~ URI::ABS_URI
       end
       
-      if options[:party] && !PARTIES.include?(options[:party])
-        puts "WARNING: Unknown party #{options.inspect}. Continuing"
+      if options[:party] && !PARTIES.include?(normalize_party(options[:party]))
+        puts "WARNING: Unknown party: '#{options.inspect}'. Continuing"
         # raise ArgumentError.new("Party #{options.inspect} is unsupported. Must be one of #{PARTIES.join(',')}")
+      end
+    end
+    
+    def normalize_party(str)
+      case str
+      when *REPUBLICAN_STRINGS then REPUBLICAN
+      when *DEMOCRAT_STRINGS   then DEMOCRAT
+      else str
       end
     end
 
