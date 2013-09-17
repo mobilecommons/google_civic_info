@@ -2,11 +2,12 @@ module GoogleCivicInfo
   class Official
     attr_accessor :name, :phones, :emails, :channels, :photoUrl, :urls, :party, :addresses
 
-    DEMOCRAT   = 'Democrat'
-    REPUBLICAN = 'Republican'
-    UNKNOWN    = 'Unknown'
+    DEMOCRAT    = 'Democrat'
+    REPUBLICAN  = 'Republican'
+    INDEPENDENT = 'Independent'
+    UNKNOWN     = 'Unknown'
     PARTIES = [
-      DEMOCRAT, REPUBLICAN, UNKNOWN
+      DEMOCRAT, REPUBLICAN, INDEPENDENT, UNKNOWN
     ]
 
     DEMOCRAT_STRINGS   = %w[Democrat Democratic D]
