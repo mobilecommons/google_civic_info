@@ -10,7 +10,7 @@ module GoogleCivicInfo
     COUNTYWIDE     = 'countywide'
     JUDICIAL       = 'judicial'
     SCHOOL_BOARD   = 'schoolBoard'
-    CITY_WIDE      = 'cityWide'
+    CITY_WIDE      = 'citywide'
     TOWNSHIP       = 'township'
     COUNTY_COUNCIL = 'countyCouncil'
     CITY_COUNCIL   = 'cityCouncil'

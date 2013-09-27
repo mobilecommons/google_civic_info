@@ -6,11 +6,12 @@ module GoogleCivicInfo
     REPUBLICAN  = 'Republican'
     INDEPENDENT = 'Independent'
     UNKNOWN     = 'Unknown'
+
     PARTIES = [
       DEMOCRAT, REPUBLICAN, INDEPENDENT, UNKNOWN
     ]
 
-    DEMOCRAT_STRINGS   = %w[Democrat Democratic D]
+    DEMOCRAT_STRINGS   = %w[Democrat Democratic D Democrat/Working\ Families]
     REPUBLICAN_STRINGS = %w[Republican R]
     
     def initialize(options={})
