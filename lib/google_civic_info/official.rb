@@ -5,10 +5,11 @@ module GoogleCivicInfo
     DEMOCRAT    = 'Democrat'
     REPUBLICAN  = 'Republican'
     INDEPENDENT = 'Independent'
+    NONPARTISAN = 'Nonpartisan'
     UNKNOWN     = 'Unknown'
 
     PARTIES = [
-      DEMOCRAT, REPUBLICAN, INDEPENDENT, UNKNOWN
+      DEMOCRAT, REPUBLICAN, INDEPENDENT, NONPARTISAN, UNKNOWN
     ]
 
     DEMOCRAT_STRINGS   = %w[Democrat Democratic D Democrat/Working\ Families]
