@@ -34,7 +34,7 @@ describe GoogleCivicInfo::Client do
 
   describe "processing Google responses" do
     it "should create a proper RepresentativeInfoResponse from Google JSON blob" do
-      r = GoogleCivicInfo::RepresentativeInfoResponse.from_google_response(JSON.parse(successful_json_response_1))
+      r = GoogleCivicInfo::RepresentativeInfoResponse.new(:response=>JSON.parse(successful_json_response_1))
       r.divisions.size.should == 7
       division = r.divisions.find{|division| division.ocd_division_id == "ocd-division/country:us/state:va"}
       division.offices.size.should == 5
@@ -46,7 +46,6 @@ describe GoogleCivicInfo::Client do
       official.urls.should == ["http://www.governor.virginia.gov/"]
       official.channels.map{|c|c.url}.should == ["https://www.facebook.com/profile.php?id=61634046094", "https://twitter.com/GovernorVA"]
     end
-    
   end
 
   describe "representative lookup, making actual HTTP requests" do
