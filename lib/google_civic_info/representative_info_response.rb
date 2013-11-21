@@ -1,21 +1,21 @@
 module GoogleCivicInfo
   class RepresentativeInfoResponse
-    attr_accessor :divisions
+    attr_accessor :divisions, :response
 
     def initialize(options={})
-      self.divisions = options[:divisions] || divisions_from_google(options[:response])
+      self.response = options[:response]
+      self.divisions = options[:divisions] || divisions_from_google
     end
 
     private
-    def divisions_from_google(response)
+    def divisions_from_google
       return unless response
 
       divisions = response['divisions'].map do |ocd_division_id, details|
         division = division_from(ocd_division_id, details)
 
         division.office_ids.each do |office_id|
-          division.offices << office_from(response['offices'][office_id],
-                                          response)
+          division.offices << office_from(response['offices'][office_id])
         end
 
         division
@@ -31,7 +31,7 @@ module GoogleCivicInfo
       Division.new new_attributes
     end
 
-    def office_from(data, response)
+    def office_from(data)
       office = Office.new(:name=>data['name'],
                           :level=>data['level'],
                           :official_ids=>data['officialIds'])
