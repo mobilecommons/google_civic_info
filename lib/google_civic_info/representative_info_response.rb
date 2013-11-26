@@ -1,10 +1,14 @@
 module GoogleCivicInfo
   class RepresentativeInfoResponse
-    attr_accessor :divisions, :response
+    attr_accessor :divisions, :response, :normalized_input
 
     def initialize(options={})
       self.response = options[:response]
       self.divisions = options[:divisions] || divisions_from_google
+    end
+
+    def normalized_input
+      response["normalizedInput"] if response
     end
 
     private
