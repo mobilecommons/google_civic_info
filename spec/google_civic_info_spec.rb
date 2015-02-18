@@ -18,21 +18,14 @@ describe GoogleCivicInfo::Client do
     it "should raise with a bad API key" do
       @client.stub(:http_request).and_return(bad_api_key_response)
       expect{ @client.lookup("2145 Whisper Way Reston, VA") }.
-        to raise_error(GoogleCivicInfo::InvalidApiKey)
-    end
-
-    it "should raise with a bad API key" do
-      @client.stub(:http_request).and_return(no_address_parameter_response)
-      expect{ @client.lookup("") }
-        .to raise_error(GoogleCivicInfo::NoAddressParameter)
+        to raise_error(GoogleCivicInfo::APIError)
     end
 
     it "should raise if Google server error" do
       @client.stub(:http_request).and_return(backend_error_response)
       expect{ @client.lookup("2145 Whisper Way Reston, VA") }
-        .to raise_error(GoogleCivicInfo::BackendError)
+        .to raise_error(GoogleCivicInfo::APIError)
     end
-
   end
 
   describe "processing Google responses" do
@@ -98,14 +91,12 @@ describe GoogleCivicInfo::Client do
       end
     end
 
-    it "should raise NoStreetSegmentFoundException" do
-      expect{@client.lookup("_!&&$*!?!+__")}
-        .to raise_error(GoogleCivicInfo::NoStreetSegmentFoundException)
+    it "a badly formed address should raise APIError " do
+      expect{@client.lookup("&$*!?_")}.to raise_error(GoogleCivicInfo::APIError)
     end
 
-    it "should raise AddressUnparseableException" do
-      expect{@client.lookup("")}
-        .to raise_error(GoogleCivicInfo::NoAddressParameter)
+    it "an empty address should raise APIError" do
+      expect{@client.lookup("")}.to raise_error(GoogleCivicInfo::APIError)
     end
 
   end
@@ -123,17 +114,15 @@ def bad_api_key_response
   }.to_json
 end
 
-def no_address_parameter_response
-  { "status" => "noAddressParameter",
-    "kind" => "civicinfo#representativeInfoResponse"}.to_json
-end
-
 def backend_error_response
-  { "code" => 503,
-    "errors" => [{ "reason" => "backendError",
-                   "domain" => "global",
-                   "message"=> "Backend Error" }],
-    "message" => "Backend Error" }.to_json
+  { "error" =>
+    { "code" => 503,
+      "errors" => [{ "reason" => "backendError",
+                     "domain" => "global",
+                     "message"=> "Backend Error" }],
+      "message" => "Backend Error"
+    }
+  }.to_json
 end
 
 

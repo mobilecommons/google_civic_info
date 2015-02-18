@@ -1,11 +1,12 @@
 require "net/https"
 require "zlib"
 require "json"
+
 module GoogleCivicInfo
   class Client
     attr_accessor :api_key
 
-    CIVIC_INFO_BASE_URL = "https://www.googleapis.com/civicinfo/us_v1"
+    CIVIC_INFO_BASE_URL = "https://www.googleapis.com/civicinfo/v2"
     REPRESENTATIVES_URL = "#{CIVIC_INFO_BASE_URL}/representatives"
     ELECTION_URL = "#{CIVIC_INFO_BASE_URL}/elections"
     VOTER_INFO_URL = "#{CIVIC_INFO_BASE_URL}/voterinfo"
@@ -18,21 +19,21 @@ module GoogleCivicInfo
     # TODO :includeOffices=>true/false
     def lookup(address, options={})
       response = JSON.parse(http_request(address, options))
-      if response["status"] == SUCCESS
-        GoogleCivicInfo::RepresentativeInfoResponse.new(:response => response)
-      else
+
+      if response["error"]
         process_error_response!(response)
+      else
+        GoogleCivicInfo::RepresentativeInfoResponse.new(:response => response)
       end
     end
 
     private
     def request_from(address)
-      request = Net::HTTP::Post.new("#{REPRESENTATIVES_URL}/lookup?key=#{api_key}",
-                                    { "Accept-Encoding" => "gzip",
-                                      "User-Agent" => "GoogleCivicInfo.rb (gzip)" })
-      request["Content-Type"] = "application/json"
-      request.body = { "address" => address }.to_json
-      request
+      url = "#{REPRESENTATIVES_URL}?key=#{api_key}&address=#{CGI.escape(address)}"
+      headers = { "Accept-Encoding" => "gzip",
+        "User-Agent" => "GoogleCivicInfo.rb (gzip)" }
+
+      Net::HTTP::Get.new(url, headers)
     end
 
     def http
@@ -43,8 +44,8 @@ module GoogleCivicInfo
     end
 
     def http_request(address, options={})
-      http.start do |post|
-        response = post.request(request_from(address))
+      http.start do |get|
+        response = get.request(request_from(address))
         if response["Content-Encoding"] == "gzip"
           Zlib::GzipReader.new(StringIO.new(response.body)).read
         else
@@ -53,47 +54,17 @@ module GoogleCivicInfo
       end
     end
 
-    SUCCESS = "success"
-    ADDRESS_UNPARSEABLE = "addressUnparseable"
-    NO_ADDRESS_PARAMETER = "noAddressParameter"
-    INTERNAL_LOOKUP_FAILURE = "internalLookupFailure"
-    NO_STREET_SEGMENT_FOUND = "noStreetSegmentFound"
-    MULTIPLE_STREET_SEGMENTS_FOUND = "multipleStreetSegmentsFound"
-    KEY_INVALID = "keyInvalid"
-    BACKEND_ERROR = "backendError"
-
     def process_error_response!(response)
-      if response["error"]
-        case response["error"]["errors"].first["reason"]
-        when KEY_INVALID
-          raise InvalidApiKey.new(response["error"]["errors"].inspect)
-        else
-          raise "Unknown Google error: #{response["error"].inspect}"
-        end
-      elsif response["code"] #503
-        case response["errors"].first["reason"]
-        when BACKEND_ERROR
-          raise BackendError.new(response["errors"].inspect)
-        else
-          raise "Unknown Google reason: #{response.inspect}"
-        end
-      else
-        case response["status"]
-        when SUCCESS #noop
-        when NO_ADDRESS_PARAMETER
-          raise NoAddressParameter.new
-        when NO_STREET_SEGMENT_FOUND
-          raise NoStreetSegmentFoundException.new
-        when ADDRESS_UNPARSEABLE
-          raise AddressUnparseableException.new
-        when MULTIPLE_STREET_SEGMENTS_FOUND
-          raise MultipleStreetSegmentsFoundException.new
-        when INTERNAL_LOOKUP_FAILURE
-          raise InternalLookupFailureException.new
-        else
-          "Unknown Google status: #{response["status"]}"
-        end
+      message = String.new
+
+      # chances are there is only one error, but we handle multiples anyway
+      response["error"]["errors"].each do |error|
+        message << "Code: #{response["error"]["code"]} "
+        message << "Reason: #{error["reason"]} "
+        message << "Message: #{error["message"]}\n"
       end
+
+      raise APIError, message
     end
   end
 end
