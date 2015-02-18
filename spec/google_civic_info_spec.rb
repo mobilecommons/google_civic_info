@@ -98,9 +98,9 @@ describe GoogleCivicInfo::Client do
       end
     end
 
-    it "should raise AddressUnparseableException" do
-      expect{@client.lookup("rocklobster")}
-        .to raise_error(GoogleCivicInfo::AddressUnparseableException)
+    it "should raise NoStreetSegmentFoundException" do
+      expect{@client.lookup("_!&&$*!?!+__")}
+        .to raise_error(GoogleCivicInfo::NoStreetSegmentFoundException)
     end
 
     it "should raise AddressUnparseableException" do
