@@ -1,5 +1,5 @@
 require "google_civic_info"
-require 'google_civic_info/exceptions'
+require "google_civic_info/exceptions"
 require "spec_helper"
 
 describe GoogleCivicInfo::Client do
@@ -12,31 +12,35 @@ describe GoogleCivicInfo::Client do
 
   describe "error processing" do
     before do
-      @client = GoogleCivicInfo::Client.new(:api_key=>'fakeout')
+      @client = GoogleCivicInfo::Client.new(:api_key=>"fakeout")
     end
 
     it "should raise with a bad API key" do
       @client.stub(:http_request).and_return(bad_api_key_response)
-      expect{ @client.lookup("2145 Whisper Way Reston, VA") }.to raise_error(GoogleCivicInfo::InvalidApiKey)
+      expect{ @client.lookup("2145 Whisper Way Reston, VA") }.
+        to raise_error(GoogleCivicInfo::InvalidApiKey)
     end
 
     it "should raise with a bad API key" do
       @client.stub(:http_request).and_return(no_address_parameter_response)
-      expect{ @client.lookup("") }.to raise_error(GoogleCivicInfo::NoAddressParameter)
+      expect{ @client.lookup("") }
+        .to raise_error(GoogleCivicInfo::NoAddressParameter)
     end
 
     it "should raise if Google server error" do
       @client.stub(:http_request).and_return(backend_error_response)
-      expect{ @client.lookup("2145 Whisper Way Reston, VA") }.to raise_error(GoogleCivicInfo::BackendError)
+      expect{ @client.lookup("2145 Whisper Way Reston, VA") }
+        .to raise_error(GoogleCivicInfo::BackendError)
     end
 
   end
 
   describe "processing Google responses" do
     let(:r) { GoogleCivicInfo::RepresentativeInfoResponse.new(:response=>JSON.parse(successful_json_response_1)) }
+
     it "should create a proper RepresentativeInfoResponse from Google JSON blob" do
       r.divisions.size.should == 7
-      division = r.divisions.find{|division| division.ocd_division_id == "ocd-division/country:us/state:va"}
+      division = r.divisions.find { |division| division.ocd_division_id == "ocd-division/country:us/state:va" }
       division.offices.size.should == 5
       office = division.offices.first
       office.name.should == "Governor"
@@ -44,15 +48,15 @@ describe GoogleCivicInfo::Client do
       official = office.officials.first
       official.name.should == "Robert F. McDonnell"
       official.urls.should == ["http://www.governor.virginia.gov/"]
-      official.channels.map{|c|c.url}.should == ["https://www.facebook.com/profile.php?id=61634046094", "https://twitter.com/GovernorVA"]
+      official.channels.map { |c| c.url }.should == ["https://www.facebook.com/profile.php?id=61634046094", "https://twitter.com/GovernorVA"]
     end
 
     describe "#normalized_input" do
       it "returns lookup input split into its parts" do
-        normalized_input = { "line1"=>"2145 Whisper Way",
-          "zip"=>"20191",
-          "city"=>"Reston",
-          "state"=>"VA" }
+        normalized_input = { "line1" => "2145 Whisper Way",
+          "zip" => "20191",
+          "city" => "Reston",
+          "state" => "VA" }
 
         r.normalized_input.should == normalized_input
       end
@@ -61,12 +65,12 @@ describe GoogleCivicInfo::Client do
 
   describe "representative lookup, making actual HTTP requests" do
     before do
-      unless ENV['GOOGLE_API_KEY']
+      unless ENV["GOOGLE_API_KEY"]
         pending "These specs make actual HTTP requests. To call them set environment variable GOOGLE_API_KEY="
       end
 
-      @your_api_key = ENV['GOOGLE_API_KEY'] || "your-api-key"
-      @client = GoogleCivicInfo::Client.new(:api_key=>@your_api_key)
+      @your_api_key = ENV["GOOGLE_API_KEY"] || "your-api-key"
+      @client = GoogleCivicInfo::Client.new(:api_key => @your_api_key)
     end
 
     it "should return a correct result" do
@@ -95,11 +99,13 @@ describe GoogleCivicInfo::Client do
     end
 
     it "should raise AddressUnparseableException" do
-      expect{@client.lookup('rocklobster')}.to raise_error(GoogleCivicInfo::AddressUnparseableException)
+      expect{@client.lookup("rocklobster")}
+        .to raise_error(GoogleCivicInfo::AddressUnparseableException)
     end
 
     it "should raise AddressUnparseableException" do
-      expect{@client.lookup('')}.to raise_error(GoogleCivicInfo::NoAddressParameter)
+      expect{@client.lookup("")}
+        .to raise_error(GoogleCivicInfo::NoAddressParameter)
     end
 
   end
@@ -107,20 +113,33 @@ describe GoogleCivicInfo::Client do
 end
 
 def bad_api_key_response
-  {"error"=>{"message"=>"Bad Request", "code"=>400, "errors"=>[{"message"=>"Bad Request", "domain"=>"usageLimits", "reason"=>"keyInvalid"}]}}.to_json
+  { "error" => {
+      "message" => "Bad Request",
+      "code" => 400,
+      "errors" => [{ "message" => "Bad Request",
+                     "domain" => "usageLimits",
+                     "reason" => "keyInvalid" }]
+    }
+  }.to_json
 end
 
 def no_address_parameter_response
-  {"status"=>"noAddressParameter", "kind"=>"civicinfo#representativeInfoResponse"}.to_json
+  { "status" => "noAddressParameter",
+    "kind" => "civicinfo#representativeInfoResponse"}.to_json
 end
 
 def backend_error_response
-  {"code"=>503, "errors"=>[{"reason"=>"backendError", "domain"=>"global", "message"=>"Backend Error"}], "message"=>"Backend Error"}.to_json
+  { "code" => 503,
+    "errors" => [{ "reason" => "backendError",
+                   "domain" => "global",
+                   "message"=> "Backend Error" }],
+    "message" => "Backend Error" }.to_json
 end
 
+
 def successful_json_response_1
-  {"offices"=>
-    {"O0"=>
+  {"offices" =>
+    {"O0" =>
       {"name"=>"VA State House of Delegates - District 036",
        "level"=>"state",
        "officialIds"=>["P0"]},
