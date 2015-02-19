@@ -18,8 +18,8 @@ module GoogleCivicInfo
       divisions = response["divisions"].map do |ocd_division_id, details|
         division = division_from(ocd_division_id, details)
 
-        division.office_ids.each do |office_id|
-          division.offices << office_from(response["offices"][office_id])
+        division.office_indices.each do |office_index|
+          division.offices << office_from(response["offices"][office_index])
         end
 
         division
@@ -28,7 +28,7 @@ module GoogleCivicInfo
 
     def division_from(ocd_division_id, attributes)
       attributes[:ocd_division_id] = ocd_division_id
-      attributes[:office_ids] = attributes.delete("officeIds")
+      attributes[:office_indices] = attributes.delete("officeIndices")
       new_attributes = {}
       attributes.each_pair { |k, v| new_attributes[k.to_sym] = v }
 
@@ -38,10 +38,10 @@ module GoogleCivicInfo
     def office_from(data)
       office = Office.new(:name =>data["name"],
                           :level => data["level"],
-                          :official_ids => data["officialIds"])
+                          :official_indices => data["officialIndices"])
 
-      office.official_ids.each do |official_id|
-        office.officials << official_from(response["officials"][official_id])
+      office.official_indices.each do |official_index|
+        office.officials << official_from(response["officials"][official_index])
       end
 
       office
@@ -53,9 +53,9 @@ module GoogleCivicInfo
                    :photoUrl => data["photoUrl"],
                    :urls => data["urls"],
                    :party => data["party"],
-                   :address => addresses_from(data),
+                   :addresses => addresses_from(data),
                    :channels => channels_from(data),
-                   :nphones => phones_from(data))
+                   :phones => phones_from(data))
     end
 
     def addresses_from(data)
@@ -77,7 +77,7 @@ module GoogleCivicInfo
     end
 
     def phones_from(data)
-      (data["phones"] || []).map{|args| Phone.new(:number => args["number"])}
+      Array(data["phones"]).map { |number| Phone.new(:number => number) }
     end
   end
 end

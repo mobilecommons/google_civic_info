@@ -1,6 +1,6 @@
 module GoogleCivicInfo
   class Office
-    attr_accessor :name, :level, :official_ids, :officials
+    attr_accessor :name, :level, :official_indices, :officials
 
     COUNTY = "county"
     FEDERAL = "federal"
@@ -13,7 +13,7 @@ module GoogleCivicInfo
       validate_inputs!(options)
       self.name  = options[:name]
       self.level = options[:level]
-      self.official_ids = Array(options[:official_ids])
+      self.official_indices = Array(options[:official_indices])
       self.officials = Array(options[:officials])
     end
 

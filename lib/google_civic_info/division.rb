@@ -1,6 +1,6 @@
 module GoogleCivicInfo
   class Division
-    attr_accessor :name, :scope, :office_ids, :ocd_division_id, :offices
+    attr_accessor :name, :scope, :office_indices, :ocd_division_id, :offices
 
     NATIONAL = "national"
     STATEWIDE = "statewide"
@@ -26,7 +26,7 @@ module GoogleCivicInfo
       self.ocd_division_id = options[:ocd_division_id]
       self.name = options[:name]
       self.scope = options[:scope]
-      self.office_ids = Array(options[:office_ids])
+      self.office_indices = Array(options[:office_indices])
       self.offices = Array(options[:offices])
     end
 
