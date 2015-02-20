@@ -1,5 +1,7 @@
 module GoogleCivicInfo
   class Division
+    # scope is not in Google Civic Info API v2, but leaving to not break
+    # existing applications. Consider scope depreciated!
     attr_accessor :name, :scope, :office_indices, :ocd_division_id, :offices
 
     NATIONAL = "national"
