@@ -37,6 +37,8 @@ describe GoogleCivicInfo::Client do
       division.offices.size.should == 4
       office = division.offices[1]
       office.name.should == "Governor"
+      office.levels.first.should == "administrativeArea1"
+      office.roles.first.should == "headOfGovernment"
       office.officials.size.should == 1
       official = office.officials.first
       official.name.should == "Terry McAuliffe"

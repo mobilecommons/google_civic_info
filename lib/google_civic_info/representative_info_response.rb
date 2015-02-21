@@ -38,6 +38,8 @@ module GoogleCivicInfo
     def office_from(data)
       office = Office.new(:name =>data["name"],
                           :level => data["level"],
+                          :levels => data["levels"],
+                          :roles => data["roles"],
                           :official_indices => data["officialIndices"])
 
       office.official_indices.each do |official_index|

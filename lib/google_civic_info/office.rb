@@ -1,6 +1,9 @@
 module GoogleCivicInfo
   class Office
-    attr_accessor :name, :level, :official_indices, :officials
+    # in Google Civic Info API v2, level is replaced by levels
+    # and possible levels are different than what was in place for level
+    # consider level depreciated!
+    attr_accessor :name, :level, :levels, :roles, :official_indices, :officials
 
     COUNTY = "county"
     FEDERAL = "federal"
@@ -12,7 +15,9 @@ module GoogleCivicInfo
     def initialize(options={})
       validate_inputs!(options)
       self.name  = options[:name]
-      self.level = options[:level]
+      self.level = options[:level] # depreciated
+      self.levels = options[:levels]
+      self.roles = options[:roles]
       self.official_indices = Array(options[:official_indices])
       self.officials = Array(options[:officials])
     end
