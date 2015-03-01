@@ -2,6 +2,8 @@
 
 Ruby client for Google Civic Information API https://developers.google.com/civic-information/
 
+*Note: this fork only supports v2 of the API as Google is no longer supporting v1.*
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -24,29 +26,29 @@ Or install it yourself as:
 
     >> result.divisions.size
     => 5
-    
+
     >> result.divisions.first.ocd_division_id
     => "ocd-division/country:us/state:va/cd:11"
-    
+
     >> result.divisions.first.name
     => "Virginia's 11th congressional district"
-    
+
     >> result.divisions.first.offices.first.name
     => "Representative"
-    
+
     >> result.divisions.first.offices.first.level
     => "federal"
-    
+
     >> result.divisions.first.offices.first.officials.first.name
     => "Gerald E. Connolly"
-    
+
     >> result.divisions.first.offices.first.officials.first.urls
     => ["http://connolly.house.gov/"]
-    
+
     >> result.divisions.first.offices.first.officials.first.channels.first.url
     => "http://www.youtube.com/repconnolly"
-    
-    
+
+
 
 
 ## Contributing
